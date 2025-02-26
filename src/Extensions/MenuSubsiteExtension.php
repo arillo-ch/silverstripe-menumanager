@@ -7,14 +7,17 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\DataExtension;
 
-if (!class_exists('\SilverStripe\Subsites\Model\Subsite') || !class_exists('\SilverStripe\Subsites\State\SubsiteState')) {
+if (
+    !class_exists('\SilverStripe\Subsites\Model\Subsite') ||
+    !class_exists('\SilverStripe\Subsites\State\SubsiteState')
+) {
     return;
 }
 
 class MenuSubsiteExtension extends DataExtension
 {
     private static $has_one = [
-        'Subsite' => 'SilverStripe\Subsites\Model\Subsite'
+        'Subsite' => 'SilverStripe\Subsites\Model\Subsite',
     ];
 
     public function updateCMSFields(FieldList $fields)
@@ -29,11 +32,10 @@ class MenuSubsiteExtension extends DataExtension
         }
     }
 
-
     public function requireDefaultRecords()
     {
         if ($this->owner->config()->get('create_menu_sets_per_subsite')) {
-            $subsites = \SilverStripe\Subsites\Model\Subsite::get();
+            $subsites = \SilverStripe\Subsites\Model\Subsite::all_sites(true);
             $names = $this->owner->getDefaultSetNames();
 
             if ($names) {
@@ -41,13 +43,15 @@ class MenuSubsiteExtension extends DataExtension
                     $state = \SilverStripe\Subsites\State\SubsiteState::singleton();
 
                     $state->withState(function () use ($subsite, $names) {
-                        \SilverStripe\Subsites\State\SubsiteState::singleton()->setSubsiteId($subsite->ID);
+                        \SilverStripe\Subsites\State\SubsiteState::singleton()->setSubsiteId(
+                            $subsite->ID
+                        );
 
                         foreach ($names as $name) {
                             $existingRecord = MenuSet::get()
                                 ->filter([
                                     'Name' => $name,
-                                    'SubsiteID' => $subsite->ID
+                                    'SubsiteID' => $subsite->ID,
                                 ])
                                 ->first();
 

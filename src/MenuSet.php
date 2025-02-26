@@ -18,9 +18,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
-/**
- * Class MenuSet
- */
 class MenuSet extends DataObject implements PermissionProvider
 {
     private static string $table_name = 'Arillo_MenuSet';
@@ -28,25 +25,18 @@ class MenuSet extends DataObject implements PermissionProvider
     private static array $db = [
         'Name' => 'Varchar(255)',
         'Description' => 'Text',
-        'Sort' => 'Int'
+        'Sort' => 'Int',
     ];
 
     private static array $has_many = [
         'MenuItems' => MenuItem::class,
     ];
 
-    private static array $cascade_deletes = [
-        'MenuItems'
-    ];
+    private static array $cascade_deletes = ['MenuItems'];
 
-    private static array $cascade_duplicates = [
-        'MenuItems'
-    ];
+    private static array $cascade_duplicates = ['MenuItems'];
 
-    private static array $searchable_fields = [
-        'Name',
-        'Description'
-    ];
+    private static array $searchable_fields = ['Name', 'Description'];
 
     private static string $default_sort = 'Sort ASC';
 
@@ -56,7 +46,10 @@ class MenuSet extends DataObject implements PermissionProvider
     public function providePermissions(): array
     {
         return [
-            'MANAGE_MENU_SETS' => _t(__CLASS__ . '.ManageMenuSets', 'Manage Menu Sets'),
+            'MANAGE_MENU_SETS' => _t(
+                __CLASS__ . '.ManageMenuSets',
+                'Manage Menu Sets'
+            ),
         ];
     }
 
@@ -137,7 +130,8 @@ class MenuSet extends DataObject implements PermissionProvider
             return $extended;
         }
 
-        return (Permission::check('MANAGE_MENU_SETS') || Permission::check('MANAGE_MENU_ITEMS'));
+        return Permission::check('MANAGE_MENU_SETS') ||
+            Permission::check('MANAGE_MENU_ITEMS');
     }
 
     /**
@@ -151,10 +145,9 @@ class MenuSet extends DataObject implements PermissionProvider
             return $extended;
         }
 
-
-        return (Permission::check('MANAGE_MENU_SETS') || Permission::check('MANAGE_MENU_ITEMS'));
+        return Permission::check('MANAGE_MENU_SETS') ||
+            Permission::check('MANAGE_MENU_ITEMS');
     }
-
 
     /**
      * @return mixed
@@ -163,7 +156,6 @@ class MenuSet extends DataObject implements PermissionProvider
     {
         return $this->MenuItems();
     }
-
 
     /**
      * Check if this menu set appears in the default sets config
@@ -174,7 +166,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return in_array($this->Name, $this->getDefaultSetNames());
     }
 
-
     /**
      * Set up default records based on the yaml config
      */
@@ -183,13 +174,15 @@ class MenuSet extends DataObject implements PermissionProvider
         parent::requireDefaultRecords();
 
         if ($this->createDefaultMenuSets()) {
-            DB::alteration_message(sprintf(
-                "MenuSets created (%s)",
-                implode(', ', $this->getDefaultSetNames())
-            ), 'created');
+            DB::alteration_message(
+                sprintf(
+                    'MenuSets created (%s)',
+                    implode(', ', $this->getDefaultSetNames())
+                ),
+                'created'
+            );
         }
     }
-
 
     public function createDefaultMenuSets()
     {
@@ -212,7 +205,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return false;
     }
 
-
     /**
      * @return FieldList
      */
@@ -224,12 +216,7 @@ class MenuSet extends DataObject implements PermissionProvider
             $config = GridFieldConfig_RelationEditor::create();
             $fields->addFieldToTab(
                 'Root.Main',
-                new GridField(
-                    'MenuItems',
-                    '',
-                    $this->MenuItems(),
-                    $config
-                )
+                new GridField('MenuItems', '', $this->MenuItems(), $config)
             );
 
             $remove = $config->getComponentByType(GridFieldDeleteAction::class);
@@ -239,10 +226,15 @@ class MenuSet extends DataObject implements PermissionProvider
             }
 
             $config->addComponent(new GridFieldOrderableRows('Sort'));
-            $config->removeComponentsByType(GridFieldAddExistingAutocompleter::class);
+            $config->removeComponentsByType(
+                GridFieldAddExistingAutocompleter::class
+            );
             $fields->addFieldToTab(
                 'Root.Meta',
-                TextareaField::create('Description', _t(__CLASS__ . '.DB_Description', 'Description'))
+                TextareaField::create(
+                    'Description',
+                    _t(__CLASS__ . '.DB_Description', 'Description')
+                )
             );
         } else {
             $fields->addFieldToTab(
@@ -260,16 +252,17 @@ class MenuSet extends DataObject implements PermissionProvider
 
             $fields->addFieldToTab(
                 'Root.Main',
-                TextareaField::create('Description', _t(__CLASS__ . '.DB_Description', 'Description'))
+                TextareaField::create(
+                    'Description',
+                    _t(__CLASS__ . '.DB_Description', 'Description')
+                )
             );
         }
-
 
         $this->extend('updateCMSFields', $fields);
 
         return $fields;
     }
-
 
     /**
      * {@inheritDoc}
@@ -287,7 +280,6 @@ class MenuSet extends DataObject implements PermissionProvider
         parent::onBeforeDelete();
     }
 
-
     /**
      * Get the MenuSet names configured under MenuSet.default_sets
      *
@@ -298,7 +290,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return $this->config()->get('default_sets') ?: [];
     }
 
-
     /**
      * @return array
      */
@@ -307,7 +298,7 @@ class MenuSet extends DataObject implements PermissionProvider
         return [
             'Name' => _t(__CLASS__ . '.DB_Name', 'Name'),
             'Description' => _t(__CLASS__ . '.DB_Description', 'Description'),
-            'MenuItems.Count' => _t(__CLASS__ . '.DB_Items', 'Items')
+            'MenuItems.Count' => _t(__CLASS__ . '.DB_Items', 'Items'),
         ];
     }
 }

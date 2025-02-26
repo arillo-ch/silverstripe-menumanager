@@ -17,9 +17,7 @@ class MenuAdmin extends ModelAdmin
     /**
      * @var array
      */
-    private static array $managed_models = [
-        MenuSet::class,
-    ];
+    private static array $managed_models = [MenuSet::class];
 
     /**
      * @var string
@@ -56,11 +54,14 @@ class MenuAdmin extends ModelAdmin
         $form = parent::getEditForm($id, $fields);
 
         /** @var GridField $gridField */
-        $gridField = $form->Fields()->dataFieldByName($this->sanitiseClassName(MenuSet::class));
+        $gridField = $form
+            ->Fields()
+            ->dataFieldByName($this->sanitiseClassName(MenuSet::class));
 
         if ($gridField) {
             if (!$this->config()->get('enable_cms_create')) {
-                $gridField->getConfig()
+                $gridField
+                    ->getConfig()
                     ->removeComponentsByType([
                         GridFieldAddNewButton::class,
                         GridFieldImportButton::class,
@@ -75,10 +76,8 @@ class MenuAdmin extends ModelAdmin
             $gridField->getConfig()->addComponent(new GridFieldOrderableRows());
         }
 
-
         return $form;
     }
-
 
     public function getList()
     {
@@ -87,7 +86,7 @@ class MenuAdmin extends ModelAdmin
         if ($this->modelClass === MenuSet::class) {
             if (class_exists('\SilverStripe\Subsites\State\SubsiteState')) {
                 $list = $list->filter([
-                    'SubsiteID' => \SilverStripe\Subsites\State\SubsiteState::singleton()->getSubsiteId()
+                    'SubsiteID' => \SilverStripe\Subsites\State\SubsiteState::singleton()->getSubsiteId(),
                 ]);
             }
         }
