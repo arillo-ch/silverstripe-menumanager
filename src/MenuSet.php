@@ -13,11 +13,18 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
+/**
+ * @property string $Name
+ * @property string $Description
+ * @property int $Sort
+ * @method HasManyList MenuItems()
+ */
 class MenuSet extends DataObject implements PermissionProvider
 {
     private static string $table_name = 'Arillo_MenuSet';
@@ -33,16 +40,10 @@ class MenuSet extends DataObject implements PermissionProvider
     ];
 
     private static array $cascade_deletes = ['MenuItems'];
-
     private static array $cascade_duplicates = ['MenuItems'];
-
     private static array $searchable_fields = ['Name', 'Description'];
-
     private static string $default_sort = 'Sort ASC';
 
-    /**
-     * @return array
-     */
     public function providePermissions(): array
     {
         return [
@@ -53,21 +54,11 @@ class MenuSet extends DataObject implements PermissionProvider
         ];
     }
 
-    /**
-     * Check for existing MenuSets with the same name
-     *
-     * {@inheritDoc}
-     */
     public function validate()
     {
         $result = parent::validate();
-
         $existing = MenuManagerTemplateProvider::MenuSet($this->Name);
 
-        /**
-         * @deprecated Since 4.0
-         * Use an index for the Name field instead https://docs.silverstripe.org/en/4/developer_guides/model/indexes/
-         */
         if ($existing && $existing->ID !== $this->ID) {
             $result->addError(
                 _t(
@@ -82,11 +73,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return $result;
     }
 
-    /**
-     * @param mixed $member
-     * @param array $context
-     * @return boolean
-     */
     public function canCreate($member = null, $context = []): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
@@ -97,10 +83,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return Permission::check('MANAGE_MENU_SETS');
     }
 
-    /**
-     * @param mixed $member
-     * @return boolean
-     */
     public function canDelete($member = null): bool
     {
         // Backwards compatibility for duplicate default sets
@@ -119,10 +101,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return Permission::check('MANAGE_MENU_SETS');
     }
 
-    /**
-     * @param mixed $member
-     * @return boolean
-     */
     public function canEdit($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
@@ -134,10 +112,6 @@ class MenuSet extends DataObject implements PermissionProvider
             Permission::check('MANAGE_MENU_ITEMS');
     }
 
-    /**
-     * @param mixed $member
-     * @return boolean
-     */
     public function canView($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
@@ -149,9 +123,6 @@ class MenuSet extends DataObject implements PermissionProvider
             Permission::check('MANAGE_MENU_ITEMS');
     }
 
-    /**
-     * @return mixed
-     */
     public function Children()
     {
         return $this->MenuItems();
@@ -166,9 +137,6 @@ class MenuSet extends DataObject implements PermissionProvider
         return in_array($this->Name, $this->getDefaultSetNames());
     }
 
-    /**
-     * Set up default records based on the yaml config
-     */
     public function requireDefaultRecords(): void
     {
         parent::requireDefaultRecords();
@@ -198,16 +166,11 @@ class MenuSet extends DataObject implements PermissionProvider
                     $set->write();
                 }
             }
-
             return true;
         }
-
         return false;
     }
 
-    /**
-     * @return FieldList
-     */
     public function getCMSFields(): FieldList
     {
         $fields = FieldList::create(TabSet::create('Root'));
@@ -288,17 +251,5 @@ class MenuSet extends DataObject implements PermissionProvider
     public function getDefaultSetNames()
     {
         return $this->config()->get('default_sets') ?: [];
-    }
-
-    /**
-     * @return array
-     */
-    public function summaryFields(): array
-    {
-        return [
-            'Name' => _t(__CLASS__ . '.DB_Name', 'Name'),
-            'Description' => _t(__CLASS__ . '.DB_Description', 'Description'),
-            'MenuItems.Count' => _t(__CLASS__ . '.DB_Items', 'Items'),
-        ];
     }
 }

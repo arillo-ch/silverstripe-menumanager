@@ -1,16 +1,15 @@
-# Silverstripe Menu Manager
+# Arillo Silverstripe Menu Manager
 
 The menu management module is for creating custom menu structures when the site
 tree hierarchy just won't do.
 
-## License
+This module is an alternative to, and is inspired by, `heyday/silverstripe-menumanager`.
 
-Menu Manager is licensed under an [MIT license](http://heyday.mit-license.org/)
 
 ## Installation
 
 ```
-composer require heyday/silverstripe-menumanager
+composer require arillo/silverstripe-menumanager
 ```
 
 After completing this step, navigate in Terminal or similar to the SilverStripe
@@ -39,37 +38,6 @@ Arillo\MenuManager\MenuSet:
         - Main
         - Footer
 ```
-
-### Creating MenuItems
-
-Once you have saved your MenuSet you can add MenuItems.
-
-MenuItems have 4 important fields:
-
-1. Page
-2. MenuTitle
-3. Link
-4. IsNewWindow
-
-#### Page
-
-A page to associate your MenuItem with.
-
-#### MenuTitle
-
-This field can be left blank if you link the menu item with a page. If not fill
-with the title you want to display in the template.
-
-#### Link
-
-This field can be left blank unless you want to link to an external website.
-When left blank using $Link in templates will automatically pull the link from
-the MenuItems associated Page. If you enter a link in this field and then pick a
-Page as well the link will be overwritten by the Page you chose.
-
-#### IsNewWindow
-
-Can be used as a check to see if 'target="\_blank"' should be added to links.
 
 ### Disable creating Menu Sets in the CMS
 
@@ -153,9 +121,13 @@ Arillo\MenuManager\MenuItem:
     - Arillo\MenuManager\Extensions\MenuSubsiteExtension
 ```
 
-## Code guidelines
+## Migrate from data from heyday/silverstripe-menumanager
 
-This project follows the standards defined in:
+Uninstall `heyday/silverstripe-menumanager` and install `arillo/silverstripe-menumanager`
+Run `dev/build/?flush=all`
 
--   [PSR-1](http://www.php-fig.org/psr/psr-1/)
--   [PSR-2](http://www.php-fig.org/psr/psr-2/)
+Afterwards you can run `dev/tasks/Arillo-MenuManager-Tasks-MigrateFromHeydayMenus` to copy the records into the other table(s), e.g.:
+
+```
+vendor/bin/sake dev/tasks/Arillo-MenuManager-Tasks-MigrateFromHeydayMenus
+```
