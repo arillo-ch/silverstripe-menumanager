@@ -1,0 +1,14 @@
+---
+Name: menu-manager#extensions
+Only:
+  classexists: '\SilverStripe\Subsites\Model\Subsite'
+---
+SilverStripe\Subsites\Model\Subsite:
+  extensions:
+    - Arillo\MenuManager\Extensions\SubsiteExtension
+Arillo\MenuManager\MenuAdmin:
+  extensions:
+    - SilverStripe\Subsites\Extensions\SubsiteMenuExtension
+Arillo\MenuManager\MenuSet:
+  extensions:
+    - Arillo\MenuManager\Extensions\MenuSubsiteExtension

@@ -1,0 +1,26 @@
+{
+    "name": "arillo/silverstripe-menumanager",
+    "type": "silverstripe-vendormodule",
+    "description": "Allows complex menu management to be handled through the CMS when a simple tree structure is not enough.",
+    "license": "MIT",
+    "require": {
+        "silverstripe/cms": "^5",
+        "symbiote/silverstripe-gridfieldextensions": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arillo\\MenuManager\\": "src/"
+        }
+    },
+    "extra": {
+        "dev-main": "1.0.x-dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true
+        }
+    }
+}
