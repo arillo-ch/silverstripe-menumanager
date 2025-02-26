@@ -9,46 +9,15 @@ use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldImportButton;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
-/**
- * Class MenuAdmin
- */
 class MenuAdmin extends ModelAdmin
 {
-    /**
-     * @var array
-     */
     private static array $managed_models = [MenuSet::class];
-
-    /**
-     * @var string
-     */
     private static string $url_segment = 'menu-manager';
-
-    /**
-     * @var string
-     */
     private static string $menu_title = 'Menus';
-
-    /**
-     * @var string
-     */
     private static string $menu_icon_class = 'font-icon-link';
-
-    /**
-     * @var array
-     */
     private static array $model_importers = [];
-
-    /**
-     * @var bool
-     */
     private static bool $enable_cms_create = true;
 
-    /**
-     * Adjust the CMS's ability to create MenuSets
-     *
-     * {@inheritDoc}
-     */
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);

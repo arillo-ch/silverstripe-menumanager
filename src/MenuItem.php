@@ -15,6 +15,17 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
+/**
+ * @property string $MenuTitle
+ * @property string $LinkType
+ * @property string $URL
+ * @property int $Sort
+ * @property bool $IsNewWindow
+ * @property string $Anchor
+ * @method SiteTree Page()
+ * @method MenuSet MenuSet()
+ * @method File File()
+ */
 class MenuItem extends DataObject implements PermissionProvider
 {
     private static string $table_name = 'Arillo_MenuItem';
@@ -256,9 +267,8 @@ class MenuItem extends DataObject implements PermissionProvider
     {
         if ($this->PageID) {
             return $this->Page()->LinkingMode();
-        } else {
-            return 'link';
         }
+        return 'link';
     }
 
     public function fieldLabels($includerelations = true)

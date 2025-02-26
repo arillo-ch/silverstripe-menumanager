@@ -13,14 +13,11 @@ class MenuManagerTemplateProvider implements TemplateGlobalProvider
 {
     use Extensible;
 
-    /**
-     * @return array
-     */
     public static function get_template_global_variables(): array
     {
         return [
             'MenuSet' => 'MenuSet',
-            'MenuSets' => 'MenuSets'
+            'MenuSets' => 'MenuSets',
         ];
     }
 
@@ -41,7 +38,6 @@ class MenuManagerTemplateProvider implements TemplateGlobalProvider
         return MenuSet::get();
     }
 
-
     /**
      * Find a MenuSet by name
      *
@@ -52,16 +48,27 @@ class MenuManagerTemplateProvider implements TemplateGlobalProvider
     public function findMenuSetByName(string $name): ?DataObject
     {
         if (empty($name)) {
-            throw new InvalidArgumentException("Please pass in the name of the MenuSet you're trying to find");
+            throw new InvalidArgumentException(
+                "Please pass in the name of the MenuSet you're trying to find"
+            );
         }
 
         $result = MenuSet::get()->filter('Name', $name);
 
-        if ($result->exists() && $result->first()->hasExtension('Arillo\MenuManager\Extensions\MenuSubsiteExtension')) {
-            $result = $result->where(sprintf(
-                'SubsiteID = %s',
-                \SilverStripe\Subsites\State\SubsiteState::singleton()->getSubsiteId()
-            ));
+        if (
+            $result->exists() &&
+            $result
+                ->first()
+                ->hasExtension(
+                    'Arillo\MenuManager\Extensions\MenuSubsiteExtension'
+                )
+        ) {
+            $result = $result->where(
+                sprintf(
+                    'SubsiteID = %s',
+                    \SilverStripe\Subsites\State\SubsiteState::singleton()->getSubsiteId()
+                )
+            );
         }
 
         $this->extend('updateFindMenuSetByName', $result);
