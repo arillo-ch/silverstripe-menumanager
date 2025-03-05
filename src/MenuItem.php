@@ -13,6 +13,7 @@ use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
+use SilverStripe\View\Parsers\URLSegmentFilter;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 /**
@@ -263,12 +264,54 @@ class MenuItem extends DataObject implements PermissionProvider
         return $this->getLinkTypes()[$this->LinkType] ?? $this->LinkType;
     }
 
+    /**
+     * Attempts to return the $field from this MenuItem
+     * If $field is not found or it is not set then attempts
+     * to return a similar field on the associated Page
+     * (if there is one)
+     *
+     * @param string $field
+     * @return mixed
+     */
+    public function __get($field)
+    {
+        $default = parent::__get($field);
+
+        if ($default || $field === 'ID') {
+            return $default;
+        } elseif ($this->LinkType == 'internal') {
+            $page = $this->Page();
+
+            if ($page instanceof DataObject) {
+                if ($page->hasMethod($field)) {
+                    return $page->$field();
+                } else {
+                    return $page->$field;
+                }
+            }
+        }
+    }
+
     public function getLinkingMode()
     {
-        if ($this->PageID) {
+        if ($this->LinkType == 'internal' && $this->PageID) {
             return $this->Page()->LinkingMode();
         }
         return 'link';
+    }
+
+    public function getURLSegment()
+    {
+        switch (true) {
+            case $this->LinkType == 'internal' && $this->Page()->exists():
+                return $this->Page()->URLSegment;
+
+            case $this->LinkType == 'file' && $this->File()->exists():
+                return (new URLSegmentFilter())->filter($this->File()->Title);
+
+            default:
+                return null;
+        }
     }
 
     public function fieldLabels($includerelations = true)
