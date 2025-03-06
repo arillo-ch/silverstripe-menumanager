@@ -279,7 +279,7 @@ class MenuItem extends DataObject implements PermissionProvider
 
         if ($default || $field === 'ID') {
             return $default;
-        } elseif ($this->LinkType == 'internal') {
+        } elseif ($this->getField('LinkType') == 'internal') {
             $page = $this->Page();
 
             if ($page instanceof DataObject) {
