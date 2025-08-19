@@ -46,6 +46,10 @@ class MenuItem extends DataObject implements PermissionProvider
         'File' => File::class,
     ];
 
+    private static $defaults = [
+        'LinkType' => 'internal',
+    ];
+
     private static array $owns = ['File'];
 
     private static array $searchable_fields = ['MenuTitle', 'Page.Title'];
