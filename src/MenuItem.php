@@ -40,6 +40,10 @@ class MenuItem extends DataObject implements PermissionProvider
         'Anchor' => 'Varchar(255)',
     ];
 
+    private static array $defaults = [
+        'LinkType' => 'internal',
+    ];
+
     private static array $has_one = [
         'Page' => SiteTree::class,
         'MenuSet' => MenuSet::class,
